@@ -55,6 +55,3 @@ The LinkedIn and X nodes can publish real posts when configured and run. For a s
 
 The supplied screenshot showed an error on the LinkedIn node and a warning on the X node. This sanitized export has not been imported or tested in another n8n instance. Resolve those node issues and verify the sheet fields, credentials, and prompt expressions before describing it as fully working.
 
-## Demonstrating the project
-
-Show the workflow canvas and a sanitized test run with sample input and generated drafts. Explain the trigger, branching, prompt design, and any issues you fixed. Hide account names, personal data, spreadsheet URLs or IDs, credentials, tokens, and private execution data. Do not commit raw exports or credential files.

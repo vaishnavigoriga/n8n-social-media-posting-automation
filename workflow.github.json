@@ -1,0 +1,249 @@
+{
+  "name": "AI News Social Media Drafting and Publishing",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_TAB_NAME",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        -16
+      ],
+      "id": "7a97dd0c-0a88-461b-bd7d-118c85d3a556",
+      "name": "Google Sheets Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=summarize this article {{ $json.newskink }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        80,
+        -16
+      ],
+      "id": "d85257eb-0fd6-45b6-8de8-46a362fb78a5",
+      "name": "summarize articles"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        80,
+        144
+      ],
+      "id": "fcb7ae33-79ff-4054-b727-804c47446f48",
+      "name": "Google Gemini Chat Model"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Assume the role of an industry expert and draught a link in post discussing the key points from a news article relevant to artificial intelligence the post should also include the insightful analysis connect with current industry trends and encourage professional engagement or discussion highlight any notable implications from the industry since linkedin supports detailed post ensure it is informative and also structured include a professional call to action here is a summary of the article: {{ $json.text }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        416,
+        -160
+      ],
+      "id": "c3473ca9-cc37-41ea-8cba-f9bc1341a753",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        432,
+        0
+      ],
+      "id": "1993323c-a2b0-4513-8564-20b00f16b70d",
+      "name": "Google Gemini Chat Model1"
+    },
+    {
+      "parameters": {
+        "person": "REPLACE_WITH_YOUR_LINKEDIN_PERSON_ID",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        800,
+        0
+      ],
+      "id": "f7c20ded-a0ab-4efa-8870-e7367f8b5b11",
+      "name": "Create a post"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Draft and X post as an AI industry expert analysing a key news article the post Deliver shop insights on the articles nail points Connect to current AI trends spark discussion with a thought providing question Bi Panchayana gauging and with a clear call to action length should be within 13 words the focus is what matters most to the ai community make every word count article summary: {{ $json.text }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        384,
+        192
+      ],
+      "id": "9a74f739-e6fc-4a08-b8b1-b3b81d8c0e01",
+      "name": "twitter llm chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        384,
+        384
+      ],
+      "id": "6155cab7-f95d-459c-a258-eb86f563afde",
+      "name": "Google Gemini Chat Model2"
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        736,
+        192
+      ],
+      "id": "1a246bd1-3556-4ab4-a69d-b179387fb7af",
+      "name": "Create Tweet"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "summarize articles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "summarize articles",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "summarize articles": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "twitter llm chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Create a post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a post": {
+      "main": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "twitter llm chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "twitter llm chain": {
+      "main": [
+        [
+          {
+            "node": "Create Tweet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": null,
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "id": null,
+  "tags": []
+}
